@@ -6,28 +6,19 @@ import '../css/style.css';
 const main = document.querySelector('#main');
 main.innerHTML = '';
 
-const loadSpinner = () => {
-  const spinner = document.createElement('div');
-  spinner.classList.add('spinner');
-  spinner.innerHTML = `
-  <div class="loading-container">
-  <div class="loading-spinner" />
-  </div>
-  `;
-  main.appendChild(spinner);
-};
-
 const editor = new Editor();
 
 if (typeof editor === 'undefined') {
-  loadSpinner();
+  const loadDiv = document.createElement('div');
+  loadDiv.id = 'loading';
+  loadDiv.textContent = 'Loading...';
+  main.appendChild(loadDiv);
 }
 
-// Check if service workers are supported
+// Register service worker
 if ('serviceWorker' in navigator) {
-  // register workbox service worker
   const workboxSW = new Workbox('/src-sw.js');
-  workboxSW.register();
-} else {
-  console.error('Service workers are not supported in this browser.');
+  workboxSW.register()
+    .then((reg) => console.log('Service worker registered.', reg))
+    .catch((err) => console.log('Service worker registration failed.', err));
 }
